@@ -1,0 +1,8 @@
+# System & Cloud fluff
+.DS_Store
+Thumbs.db
+
+# Python/Java build environments (if applicable)
+__pycache__/
+*.class
+.venv/
