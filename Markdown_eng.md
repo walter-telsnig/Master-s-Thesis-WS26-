@@ -42,6 +42,13 @@ To fulfill the rigorous requirements of an Applied Computer Science thesis, the 
 
 ### System Data Flow
 
+```text
++----------------------+ Events +----------------------+ | Data Ingestion Unit | ------------> | Message Broker | | (Python API Scraper) |
+(JSON Payload) | (RabbitMQ Container) | +----------------------+ +----------------------+ | | | Dispatches | Dispatches v v
++----------------------+ +----------------------+ | Model Services | <------------- | Feature Store | | (SFE, XGBoost, LSTM) | (Sync Features) |
+(PostgreSQL/Feast DB) | +----------------------+ +----------------------+
+```
+
 ```mermaid
 graph TD
     %% Define styles/shapes for clear grouping
