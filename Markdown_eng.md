@@ -42,17 +42,22 @@ To fulfill the rigorous requirements of an Applied Computer Science thesis, the 
 
 ### System Data Flow
 
-+------------------------+      Events      +------------------------+
-|  Data Ingestion Unit   | ---------------> |   Message Broker       |
-|  (Python API Scraper)  |  (JSON Payload)  |   (RabbitMQ Container) |
-+------------------------+                  +------------------------+
-            |                                           |
-            | Dispatches                                | Dispatches
-            v                                           v
-+------------------------+                  +------------------------+
-|  Model Services        | <--------------- |   Feature Store        |
-| (SFE, XGBoost, LSTM)   |  (Sync Features) |  (PostgreSQL/Feast DB) |
-+------------------------+                  +------------------------+
+```mermaid
+graph TD
+    %% Define styles/shapes for clear grouping
+    subgraph Data Ingestion
+        A[Events <br> JSON Payload] --> B(Data Ingestion Unit <br> Python API Scraper)
+    end
+
+    subgraph Streaming & Storage
+        B --> C[Message Broker <br> RabbitMQ Container]
+        C -->|Dispatches| D[(Feature Store <br> PostgreSQL/Feast DB)]
+    end
+
+    subgraph Prediction Pipeline
+        D -->|Sync Features| E(Model Services <br> SFE, XGBoost, LSTM)
+    end
+```
 
 ### Technical Components
 * Containerization: The entire infrastructure is encapsulated via docker-compose to guarantee absolute portability and reproducibility.
