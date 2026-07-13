@@ -42,28 +42,34 @@ To fulfill the rigorous requirements of an Applied Computer Science thesis, the 
 
 ### System Data Flow
 
-
 ```mermaid
-graph LA
-    %% Row 1
-    Ingestion["+--------------------------+<br>|   Data Ingestion Unit    |<br>|   (Python API Scraper)   |<br>+--------------------------+"]
-    Broker["+--------------------------+<br>|      Message Broker      |<br>|   (RabbitMQ Container)   |<br>+--------------------------+"]
-    
-    %% Row 2
-    Models["+--------------------------+<br>|      Model Services      |<br>|   (SFE, XGBoost, LSTM)   |<br>+--------------------------+"]
-    Store["+--------------------------+<br>|      Feature Store       |<br>|  (PostgreSQL/Feast DB)   |<br>+--------------------------+"]
+graph LR
+    %% Define the nodes with clean line breaks
+    Ingestion["Data Ingestion Unit<br>(Python API Scraper)"]
+    Broker["Message Broker<br>(RabbitMQ Container)"]
+    Store["Feature Store<br>(PostgreSQL/Feast DB)"]
+    Models["Model Services<br>(SFE, XGBoost, LSTM)"]
 
-    %% Connections matching your layout
+    %% Create the cyclic flow
     Ingestion -->|Events<br>JSON Payload| Broker
     Broker -->|Dispatches| Store
     Store -->|Sync Features| Models
     Models -->|Dispatches| Ingestion
 
-    %% Styling to mimic the terminal look
-    style Ingestion fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
-    style Broker fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
-    style Models fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
-    style Store fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
+    %% Apply layout positioning hints by binding rows
+    %% This keeps Ingestion/Broker on top and Models/Store on the bottom
+    subgraph Upper [" "]
+        Ingestion
+        Broker
+    end
+    subgraph Lower [" "]
+        Models
+        Store
+    end
+    
+    %% Hide the subgraph borders for a clean look
+    style Upper fill:none,stroke:none
+    style Lower fill:none,stroke:none
 ```
 
 ### Technical Components
