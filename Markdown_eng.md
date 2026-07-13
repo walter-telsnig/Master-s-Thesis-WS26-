@@ -42,28 +42,28 @@ To fulfill the rigorous requirements of an Applied Computer Science thesis, the 
 
 ### System Data Flow
 
-```text
-+----------------------+ Events +----------------------+ | Data Ingestion Unit | ------------> | Message Broker | | (Python API Scraper) |
-(JSON Payload) | (RabbitMQ Container) | +----------------------+ +----------------------+ | | | Dispatches | Dispatches v v
-+----------------------+ +----------------------+ | Model Services | <------------- | Feature Store | | (SFE, XGBoost, LSTM) | (Sync Features) |
-(PostgreSQL/Feast DB) | +----------------------+ +----------------------+
-```
 
 ```mermaid
-graph TD
-    %% Define styles/shapes for clear grouping
-    subgraph Data Ingestion
-        A[Events <br> JSON Payload] --> B(Data Ingestion Unit <br> Python API Scraper)
-    end
+graph LA
+    %% Row 1
+    Ingestion["+--------------------------+<br>|   Data Ingestion Unit    |<br>|   (Python API Scraper)   |<br>+--------------------------+"]
+    Broker["+--------------------------+<br>|      Message Broker      |<br>|   (RabbitMQ Container)   |<br>+--------------------------+"]
+    
+    %% Row 2
+    Models["+--------------------------+<br>|      Model Services      |<br>|   (SFE, XGBoost, LSTM)   |<br>+--------------------------+"]
+    Store["+--------------------------+<br>|      Feature Store       |<br>|  (PostgreSQL/Feast DB)   |<br>+--------------------------+"]
 
-    subgraph Streaming & Storage
-        B --> C[Message Broker <br> RabbitMQ Container]
-        C -->|Dispatches| D[(Feature Store <br> PostgreSQL/Feast DB)]
-    end
+    %% Connections matching your layout
+    Ingestion -->|Events<br>JSON Payload| Broker
+    Broker -->|Dispatches| Store
+    Store -->|Sync Features| Models
+    Models -->|Dispatches| Ingestion
 
-    subgraph Prediction Pipeline
-        D -->|Sync Features| E(Model Services <br> SFE, XGBoost, LSTM)
-    end
+    %% Styling to mimic the terminal look
+    style Ingestion fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
+    style Broker fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
+    style Models fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
+    style Store fill:#222,stroke:#fff,color:#fff,stroke-dasharray: 5 5
 ```
 
 ### Technical Components
